@@ -36,4 +36,6 @@ BOOL WINAPI DllMain(HMODULE handle, DWORD reason, LPVOID reserved) {
 		case DLL_PROCESS_DETACH:
 			break;
 	}
+
+	return TRUE;
 }
