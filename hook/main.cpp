@@ -34,6 +34,7 @@ BOOL WINAPI DllMain(HMODULE handle, DWORD reason, LPVOID reserved) {
 			break;
 		}
 		case DLL_PROCESS_DETACH:
+			MH_Uninitialize();
 			break;
 	}
 
