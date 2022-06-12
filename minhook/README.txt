@@ -1,0 +1,2 @@
+files here are built from release v1.3.3 from https://github.com/TsudaKageyu/minhook.
+these are included for convenience's sake because the officially distributed files aren't compatible with visual studio 2022. 
