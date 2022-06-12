@@ -26,6 +26,11 @@ BOOL WINAPI DllMain(HMODULE handle, DWORD reason, LPVOID reserved) {
 				error_code |= MH_CreateHook((runfunc_p)(base_address + 0x12510), runfunc_hook, 0);
 				error_code |= MH_EnableHook(MH_ALL_HOOKS);
 
+			if (error_code != MH_OK) {
+				MessageBox(NULL, L"One or more errors were raised while initialising MinHook!", L"MinHook Error", MB_OK | MB_ICONERROR);
+				return FALSE;
+			}
+
 			break;
 		}
 		case DLL_PROCESS_DETACH:
