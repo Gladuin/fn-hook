@@ -16,23 +16,28 @@ int64_t __fastcall runfunc_hook(LPVOID lpThreadParameter) {
 }
 
 
+DWORD WINAPI hook_init() {
+	uint64_t base_address = (uint64_t)GetModuleHandle(L"FnHotkeyUtility.exe");
+
+	int error_code = MH_Initialize();
+		error_code |= MH_CreateHook((osdfunc_p)(base_address + 0x12070), osdfunc_hook, 0);
+		error_code |= MH_CreateHook((runfunc_p)(base_address + 0x12510), runfunc_hook, 0);
+		error_code |= MH_EnableHook(MH_ALL_HOOKS);
+
+	if (error_code != MH_OK) {
+		MessageBox(NULL, L"One or more errors were raised while initialising MinHook!", L"MinHook Error", MB_OK | MB_ICONERROR);
+		return EXIT_FAILURE;
+	}
+
+	return EXIT_SUCCESS;
+}
+
 BOOL WINAPI DllMain(HMODULE handle, DWORD reason, LPVOID reserved) {
 	switch (reason) {
-		case DLL_PROCESS_ATTACH: {
-			uint64_t base_address = (uint64_t)GetModuleHandle(L"FnHotkeyUtility.exe");
-
-			int error_code = MH_Initialize();
-				error_code |= MH_CreateHook((osdfunc_p)(base_address + 0x12070), osdfunc_hook, 0);
-				error_code |= MH_CreateHook((runfunc_p)(base_address + 0x12510), runfunc_hook, 0);
-				error_code |= MH_EnableHook(MH_ALL_HOOKS);
-
-			if (error_code != MH_OK) {
-				MessageBox(NULL, L"One or more errors were raised while initialising MinHook!", L"MinHook Error", MB_OK | MB_ICONERROR);
-				return FALSE;
-			}
-
+		case DLL_PROCESS_ATTACH:
+			CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)hook_init, NULL, NULL, NULL);
 			break;
-		}
+
 		case DLL_PROCESS_DETACH:
 			MH_Uninitialize();
 			break;
