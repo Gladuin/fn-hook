@@ -86,16 +86,51 @@ int64_t __fastcall osdfunc_hook(uint16_t resource_id) {
 }
 
 int64_t __fastcall runfunc_hook(LPVOID lpThreadParameter) {
-    if ((INT_PTR)ShellExecute(NULL, L"open", 
-                              config->GetValue(L"run", L"run", L"notepad.exe"),
-                              config->GetValue(L"run", L"parameters", NULL),
-                              config->GetValue(L"run", L"directory", NULL),
-                              SW_NORMAL) > 32) {
+    LPCWSTR run_config = config->GetValue(L"run", L"run", L"notepad.exe");
+    LPWSTR expanded_run;
+    DWORD size_run = ExpandEnvironmentStrings(run_config, NULL, 0);
+
+    if (size_run == sizeof(run_config)) {
+        expanded_run = (LPWSTR)run_config;
+    } else {
+        expanded_run = (LPWSTR)malloc(sizeof(LPWSTR) * size_run);
+        ExpandEnvironmentStrings(run_config, expanded_run, size_run);
+    }
+
+
+    LPCWSTR parameters_config = config->GetValue(L"run", L"parameters", NULL);
+    LPWSTR expanded_parameters;
+    DWORD size_parameters = ExpandEnvironmentStrings(parameters_config, NULL, 0);
+
+    if (size_parameters == sizeof(parameters_config)) {
+        expanded_parameters = (LPWSTR)parameters_config;
+    } else {
+        expanded_parameters = (LPWSTR)malloc(sizeof(LPWSTR) * size_parameters);
+        ExpandEnvironmentStrings(parameters_config, expanded_parameters, size_parameters);
+    }
+
+
+    LPCWSTR directory_config = config->GetValue(L"run", L"directory", NULL);
+    LPWSTR expanded_directory;
+    DWORD size_directory = ExpandEnvironmentStrings(directory_config, NULL, 0);
+
+    if (size_directory == sizeof(directory_config)) {
+        expanded_directory = (LPWSTR)directory_config;
+    } else {
+        expanded_directory = (LPWSTR)malloc(sizeof(LPWSTR) * size_directory);
+        ExpandEnvironmentStrings(directory_config, expanded_directory, size_directory);
+    }
+
+
+    if ((INT_PTR)ShellExecute(NULL, L"open", expanded_run, expanded_parameters, expanded_directory, SW_NORMAL) > 32) {
+        free(expanded_run);
+        free(expanded_parameters);
+        free(expanded_directory);
+
         return 0;
     } else {
         return 1;
     }
-    
 }
 
 
