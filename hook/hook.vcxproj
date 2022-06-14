@@ -95,6 +95,9 @@
       <AdditionalLibraryDirectories>$(SolutionDir)libraries\minhook\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>$(CoreLibraryDependencies);$(WindowsSDK_LibraryPath)\$(LibrariesArchitecture)\Pathcch.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>COPY $(SolutionDir)assets\fn-hook-config.ini $(TargetDir)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -113,6 +116,9 @@
       <AdditionalLibraryDirectories>$(SolutionDir)libraries\minhook\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>$(CoreLibraryDependencies);$(WindowsSDK_LibraryPath)\$(LibrariesArchitecture)\Pathcch.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>COPY $(SolutionDir)assets\fn-hook-config.ini $(TargetDir)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -127,6 +133,9 @@
       <AdditionalLibraryDirectories>$(SolutionDir)libraries\minhook\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>$(SolutionDir)libraries\minhook\lib\libMinHook.x64.lib;$(WindowsSDK_LibraryPath)\$(LibrariesArchitecture)\Pathcch.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>COPY $(SolutionDir)assets\fn-hook-config.ini $(TargetDir)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -145,6 +154,9 @@
       <AdditionalLibraryDirectories>$(SolutionDir)libraries\minhook\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>$(SolutionDir)libraries\minhook\lib\libMinHook.x64.lib;$(WindowsSDK_LibraryPath)\$(LibrariesArchitecture)\Pathcch.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>COPY $(SolutionDir)assets\fn-hook-config.ini $(TargetDir)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
