@@ -1,8 +1,14 @@
 #include <Windows.h>
-#include <MinHook.h>
+#include <PathCch.h>
 
 #include <cstdint>
 #include <string>
+
+#include <MinHook.h>
+#include <SimpleIni.h>
+
+
+CSimpleIni *config;
 
 
 typedef int64_t (__fastcall *osdfunc_p)(uint16_t);
@@ -13,7 +19,16 @@ int64_t __fastcall osdfunc_hook(uint16_t resource_id) {
 }
 
 int64_t __fastcall runfunc_hook(LPVOID lpThreadParameter) {
-    return 0;
+    if ((INT_PTR)ShellExecute(NULL, L"open", 
+                              config->GetValue(L"run", L"run", L"notepad.exe"),
+                              config->GetValue(L"run", L"parameters", NULL),
+                              config->GetValue(L"run", L"directory", NULL),
+                              SW_NORMAL) > 32) {
+        return 0;
+    } else {
+        return 1;
+    }
+    
 }
 
 
@@ -41,6 +56,15 @@ DWORD WINAPI hook_init(LPVOID dll_handle) {
     check_mh_error(MH_EnableHook(MH_ALL_HOOKS),
                    "MH_EnableHook",
                    (HMODULE)dll_handle);
+
+    WCHAR config_path[_MAX_PATH];
+    GetModuleFileName((HMODULE)dll_handle, config_path, _MAX_PATH);
+    PathCchRemoveFileSpec(config_path, _MAX_PATH);
+    PathCchAppend(config_path, _MAX_PATH, L"\\fn-hook-config.ini");
+
+    config = new CSimpleIni;
+    config->SetUnicode();
+    config->LoadFile(config_path);
 
     return EXIT_SUCCESS;
 }
