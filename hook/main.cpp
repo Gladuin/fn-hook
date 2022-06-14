@@ -123,9 +123,9 @@ int64_t __fastcall runfunc_hook(LPVOID lpThreadParameter) {
 
 
     if ((INT_PTR)ShellExecute(NULL, L"open", expanded_run, expanded_parameters, expanded_directory, SW_NORMAL) > 32) {
-        free(expanded_run);
-        free(expanded_parameters);
-        free(expanded_directory);
+        if (size_run != sizeof(run_config)) free(expanded_run);
+        if (size_parameters != sizeof(parameters_config)) free(expanded_parameters);
+        if (size_directory != sizeof(directory_config)) free(expanded_directory);
 
         return 0;
     } else {
