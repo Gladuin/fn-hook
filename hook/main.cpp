@@ -13,9 +13,76 @@ CSimpleIni *config;
 
 typedef int64_t (__fastcall *osdfunc_p)(uint16_t);
 typedef int64_t (__fastcall *runfunc_p)(LPVOID);
+osdfunc_p osdfunc_original = NULL;
 
 int64_t __fastcall osdfunc_hook(uint16_t resource_id) {
-    return 0;
+    // this is to keep the large block down below more readable.
+    #define GETBOOL(key) config->GetBoolValue(L"osd", key, true)
+
+    // there is a better way to do this right? well, i'm too lazy to figure that out, if it even exists.
+    if (resource_id == 2029 && GETBOOL(L"download_skypeforbusiness")) {
+        return osdfunc_original(resource_id);
+    } else if (resource_id == 2030 && GETBOOL(L"download_microsoftteams")) {
+        return osdfunc_original(resource_id);
+    } else if ((resource_id == 2011 || resource_id == 2012) && GETBOOL(L"num_lock")) {
+        return osdfunc_original(resource_id);
+    } else if ((resource_id == 2013 || resource_id == 2014) && GETBOOL(L"caps_lock")) {
+        return osdfunc_original(resource_id);
+    } else if ((resource_id == 2015 || resource_id == 2016) && GETBOOL(L"microphone")) {
+        return osdfunc_original(resource_id);
+    } else if ((resource_id == 2017 || resource_id == 2018) && GETBOOL(L"camera")) {
+        return osdfunc_original(resource_id);
+    } else if ((resource_id == 2019 || resource_id == 2020) && GETBOOL(L"touchpad")) {
+        return osdfunc_original(resource_id);
+    } else if ((resource_id == 2027 || resource_id == 2028) && GETBOOL(L"fn_lock")) {
+        return osdfunc_original(resource_id);
+    } else if ((resource_id == 10224 || resource_id == 10225) && GETBOOL(L"legion_rear_connector_leds")) {
+        return osdfunc_original(resource_id);
+    } else if ((resource_id == 10229 || resource_id == 10230) && GETBOOL(L"legion_logo_led")) {
+        return osdfunc_original(resource_id);
+    } else if ((resource_id == 10250 || resource_id == 10251) && GETBOOL(L"day_night_mode")) {
+        return osdfunc_original(resource_id);
+    } else if ((resource_id == 10237 || 
+                resource_id == 10238 || 
+                resource_id == 10239) && GETBOOL(L"dolby_mode")) {
+        return osdfunc_original(resource_id);
+    } else if ((resource_id == 2031 ||
+                resource_id == 2032 || 
+                resource_id == 2033 || 
+                resource_id == 2034) && GETBOOL(L"keyboard_backlight_brightness")) {
+        return osdfunc_original(resource_id);
+    } else if ((resource_id == 10226 ||
+                resource_id == 10227 ||
+                resource_id == 10228 ||
+                resource_id == 10240) && GETBOOL(L"legion_keyboard_backlight_brightness")) {
+        return osdfunc_original(resource_id);
+    } else if ((resource_id == 2037 || 
+                resource_id == 2038 || 
+                resource_id == 2039 ||
+                resource_id == 2040 || 
+                resource_id == 2041 || 
+                resource_id == 2042) && GETBOOL(L"refresh_rate")) {
+        return osdfunc_original(resource_id);
+    } else if ((resource_id == 10231 || 
+                resource_id == 10232 || 
+                resource_id == 10233 ||
+                resource_id == 10234 || 
+                resource_id == 10235 || 
+                resource_id == 10236) && GETBOOL(L"legion_rgb_mode")) {
+        return osdfunc_original(resource_id);
+    } else if ((resource_id == 2021 ||
+                resource_id == 2022 ||
+                resource_id == 2023 ||
+                resource_id == 2024 ||
+                resource_id == 2025 ||
+                resource_id == 2026 ||
+                resource_id == 2043 ||
+                resource_id == 2044 ||
+                resource_id == 2045) && GETBOOL(L"performance_mode")) {
+        return osdfunc_original(resource_id);
+    } else {
+        return 0;
+    }
 }
 
 int64_t __fastcall runfunc_hook(LPVOID lpThreadParameter) {
@@ -47,7 +114,7 @@ DWORD WINAPI hook_init(LPVOID dll_handle) {
     check_mh_error(MH_Initialize(),
                    "MH_Initialize",
                    (HMODULE)dll_handle);
-    check_mh_error(MH_CreateHook((osdfunc_p)(base_address + 0x12070), osdfunc_hook, 0),
+    check_mh_error(MH_CreateHook((osdfunc_p)(base_address + 0x12070), osdfunc_hook, (LPVOID *)&osdfunc_original),
                    "MH_CreateHook (osdfunc)",
                    (HMODULE)dll_handle);
     check_mh_error(MH_CreateHook((runfunc_p)(base_address + 0x12510), runfunc_hook, 0),
