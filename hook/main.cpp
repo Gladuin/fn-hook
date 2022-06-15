@@ -10,6 +10,10 @@
 
 CSimpleIni *config;
 
+LPWSTR expanded_run;
+LPWSTR expanded_parameters;
+LPWSTR expanded_directory;
+
 
 typedef int64_t (__fastcall *osdfunc_p)(uint16_t);
 typedef int64_t (__fastcall *runfunc_p)(LPVOID);
@@ -86,53 +90,35 @@ int64_t __fastcall osdfunc_hook(uint16_t resource_id) {
 }
 
 int64_t __fastcall runfunc_hook(LPVOID lpThreadParameter) {
-    LPCWSTR run_config = config->GetValue(L"run", L"run", L"notepad.exe");
-    LPWSTR expanded_run;
-    DWORD size_run = ExpandEnvironmentStrings(run_config, NULL, 0);
-
-    if (size_run == sizeof(run_config)) {
-        expanded_run = (LPWSTR)run_config;
-    } else {
-        expanded_run = (LPWSTR)malloc(sizeof(LPWSTR) * size_run);
-        ExpandEnvironmentStrings(run_config, expanded_run, size_run);
-    }
-
-
-    LPCWSTR parameters_config = config->GetValue(L"run", L"parameters", NULL);
-    LPWSTR expanded_parameters;
-    DWORD size_parameters = ExpandEnvironmentStrings(parameters_config, NULL, 0);
-
-    if (size_parameters == sizeof(parameters_config)) {
-        expanded_parameters = (LPWSTR)parameters_config;
-    } else {
-        expanded_parameters = (LPWSTR)malloc(sizeof(LPWSTR) * size_parameters);
-        ExpandEnvironmentStrings(parameters_config, expanded_parameters, size_parameters);
-    }
-
-
-    LPCWSTR directory_config = config->GetValue(L"run", L"directory", NULL);
-    LPWSTR expanded_directory;
-    DWORD size_directory = ExpandEnvironmentStrings(directory_config, NULL, 0);
-
-    if (size_directory == sizeof(directory_config)) {
-        expanded_directory = (LPWSTR)directory_config;
-    } else {
-        expanded_directory = (LPWSTR)malloc(sizeof(LPWSTR) * size_directory);
-        ExpandEnvironmentStrings(directory_config, expanded_directory, size_directory);
-    }
-
-
     if ((INT_PTR)ShellExecute(NULL, L"open", expanded_run, expanded_parameters, expanded_directory, SW_NORMAL) > 32) {
-        if (size_run != sizeof(run_config)) free(expanded_run);
-        if (size_parameters != sizeof(parameters_config)) free(expanded_parameters);
-        if (size_directory != sizeof(directory_config)) free(expanded_directory);
-
         return 0;
     } else {
         return 1;
     }
 }
 
+
+void initialise_runfunc_conf() {
+    LPCWSTR run_config = config->GetValue(L"run", L"run", L"notepad.exe");
+    DWORD size_run = ExpandEnvironmentStrings(run_config, NULL, 0);
+
+    expanded_run = (LPWSTR)malloc(sizeof(LPWSTR) * size_run);
+    ExpandEnvironmentStrings(run_config, expanded_run, size_run);
+
+
+    LPCWSTR parameters_config = config->GetValue(L"run", L"parameters", NULL);
+    DWORD size_parameters = ExpandEnvironmentStrings(parameters_config, NULL, 0);
+
+    expanded_parameters = (LPWSTR)malloc(sizeof(LPWSTR) * size_parameters);
+    ExpandEnvironmentStrings(parameters_config, expanded_parameters, size_parameters);
+
+
+    LPCWSTR directory_config = config->GetValue(L"run", L"directory", NULL);
+    DWORD size_directory = ExpandEnvironmentStrings(directory_config, NULL, 0);
+
+    expanded_directory = (LPWSTR)malloc(sizeof(LPWSTR) * size_directory);
+    ExpandEnvironmentStrings(directory_config, expanded_directory, size_directory);
+}
 
 void check_mh_error(MH_STATUS status, std::string mh_type, HMODULE dll_handle) {
     if (status != MH_OK) {
@@ -168,6 +154,8 @@ DWORD WINAPI hook_init(LPVOID dll_handle) {
     config->SetUnicode();
     config->LoadFile(config_path);
 
+    initialise_runfunc_conf();
+
     return EXIT_SUCCESS;
 }
 
@@ -180,6 +168,13 @@ BOOL WINAPI DllMain(HMODULE handle, DWORD reason, LPVOID reserved) {
         case DLL_PROCESS_DETACH:
             MH_DisableHook(MH_ALL_HOOKS);
             MH_Uninitialize();
+
+            // not sure if this is necessary or if windows clears this stuff upon detach but better be safe than sorry i guess?
+            free(expanded_run);
+            free(expanded_parameters);
+            free(expanded_directory);
+            delete(config);
+
             break;
     }
 
