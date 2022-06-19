@@ -82,6 +82,11 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>$(WindowsSDK_LibraryPath)\$(LibrariesArchitecture)\Pathcch.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>COPY $(SolutionDir)assets\add_to_startup.bat $(TargetDir)
+COPY $(SolutionDir)assets\remove_from_startup.bat $(TargetDir)
+COPY $(SolutionDir)assets\reload.bat $(TargetDir)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -99,6 +104,11 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>$(WindowsSDK_LibraryPath)\$(LibrariesArchitecture)\Pathcch.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>COPY $(SolutionDir)assets\add_to_startup.bat $(TargetDir)
+COPY $(SolutionDir)assets\remove_from_startup.bat $(TargetDir)
+COPY $(SolutionDir)assets\reload.bat $(TargetDir)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -112,6 +122,11 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>$(WindowsSDK_LibraryPath)\$(LibrariesArchitecture)\Pathcch.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>COPY $(SolutionDir)assets\add_to_startup.bat $(TargetDir)
+COPY $(SolutionDir)assets\remove_from_startup.bat $(TargetDir)
+COPY $(SolutionDir)assets\reload.bat $(TargetDir)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -129,6 +144,11 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>$(WindowsSDK_LibraryPath)\$(LibrariesArchitecture)\Pathcch.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>COPY $(SolutionDir)assets\add_to_startup.bat $(TargetDir)
+COPY $(SolutionDir)assets\remove_from_startup.bat $(TargetDir)
+COPY $(SolutionDir)assets\reload.bat $(TargetDir)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="injector.cpp" />
