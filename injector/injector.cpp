@@ -62,8 +62,9 @@ HANDLE get_fnhotkeyutility_handle() {
 }
 
 int main() {
-    BEGINNING:
+    FreeConsole();
 
+    BEGINNING:
     HANDLE process_handle = get_fnhotkeyutility_handle();
 
     while (process_handle == NULL) {
